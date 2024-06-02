@@ -1,6 +1,7 @@
 # Compiler files
 cache/
 out/
+.gas-snapshot
 
 # Ignores development broadcast logs
 !/broadcast
