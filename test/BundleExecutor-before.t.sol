@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {Test, console} from "forge-std/Test.sol";
+import "forge-std/Test.sol";
 import {FlashBotsMultiCall} from "../src/BundleExecutor-before.sol";
 import {IUniV2Pair, IERC20} from "./shared.sol";
 
@@ -15,7 +15,30 @@ contract ExecutorTest is Test {
     FlashBotsMultiCall public executor;
 
     function setUp() public {
+        vm.prank(me);
         executor = new FlashBotsMultiCall(me);
+
+        vm.store(
+            address(uniPool),
+            bytes32(uint256(8)), // getReserves slot
+            0x665c6fc30000000000726da71f957be90350000000069edd451a8cac85b3f053
+        );
+
+        vm.store(
+            address(sushiPool),
+            bytes32(uint256(8)), // getReserves slot
+            0x665c6fcf00000000004d4a487a40a07d962e0000000477225618f47094b06380
+        );
+
+        vm.deal(me, 0.1 ether);
+        deal(address(weth), address(uniPool), 1 ether);
+        deal(address(dai), address(uniPool), 1 ether);
+        deal(address(weth), address(sushiPool), 1 ether);
+        deal(address(dai), address(sushiPool), 1 ether);
+        deal(address(weth), address(executor), 0.1 ether);
+    }
+
+    function test_uniswapWeth() public {
         uint256 wethAmountIn = 0.1 ether;
         (uint112 uniDaiReserve, uint112 uniWethReserve, ) = uniPool
             .getReserves();
@@ -24,22 +47,49 @@ contract ExecutorTest is Test {
 
         uint256 daiAmountOut = getAmountOut(
             wethAmountIn,
-            sushiWethReserve,
-            sushiDaiReserve
+            uniWethReserve,
+            uniDaiReserve
         );
 
         uint256 wethAmountOut = getAmountOut(
             daiAmountOut,
-            uniDaiReserve,
-            uniWethReserve
+            sushiDaiReserve,
+            sushiWethReserve
         );
 
-        console.log(daiAmountOut);
-        console.log(wethAmountOut);
-    }
+        uint256 uniWethBalance = weth.balanceOf(address(uniPool));
+        uint256 uniDaiBalance = dai.balanceOf(address(uniPool));
+        uint256 sushiWethBalance = weth.balanceOf(address(sushiPool));
+        uint256 sushiDaiBalance = dai.balanceOf(address(sushiPool));
 
-    function test_uniswapWeth() public {
-        console.log("dupa1");
+        console.log("uniWethReserve");
+        console.log(uniWethReserve);
+        console.log("uniWethBalance");
+        console.log(uniWethBalance);
+
+        console.log("uniDaiReserve");
+        console.log(uniDaiReserve);
+        console.log("uniDaiBalance");
+        console.log(uniDaiBalance);
+
+        console.log("sushiWethReserve");
+        console.log(sushiWethReserve);
+        console.log("sushiWethBalance");
+        console.log(sushiWethBalance);
+
+        console.log("sushiDaiReserve");
+        console.log(sushiDaiReserve);
+        console.log("sushiDaiBalance");
+        console.log(sushiDaiBalance);
+
+        console.log("daiAmountOut");
+        console.log(daiAmountOut);
+        console.log("wethAmountOut");
+        console.log(wethAmountOut);
+
+        assembly {
+
+        }
     }
 
     function getAmountOut(
