@@ -1,14 +1,22 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import {FlashBotsMultiCall} from "../src/BundleExecutor-before.sol";
+import {FlashBotsMultiCall} from "../src/BundleExecutor-after.sol";
 import {BaseTest} from "./shared.sol";
 
 contract ExecutorBeforeTest is BaseTest {
     function test_uniswapWeth() public {
         vm.prank(me);
-        FlashBotsMultiCall executor = new FlashBotsMultiCall(me);
+        FlashBotsMultiCall executorTemplate = new FlashBotsMultiCall(me);
+        bytes memory executorCode = address(executorTemplate).code;
+        address executorAddr = address(
+            0x000000000000000002D4Bc56F957B3710216aB00
+        );
+        vm.etch(executorAddr, executorCode);
+        FlashBotsMultiCall executor = FlashBotsMultiCall(
+            payable(address(0x000000000000000002D4Bc56F957B3710216aB00))
+        );
 
         deal(address(weth), address(executor), 0.1 ether);
 
@@ -37,7 +45,13 @@ contract ExecutorBeforeTest is BaseTest {
         payloads[1] = payload2;
 
         vm.prank(me);
-        executor.uniswapWeth(wethAmountIn, 100000000000000, targets, payloads);
+        executor.uniswapWeth(
+            wethAmountIn,
+            100000000000000,
+            0.1 ether,
+            targets,
+            payloads
+        );
 
         uint256 wethBalanceAfter = weth.balanceOf(address(executor));
         console.log("wethBalanceAfter");
