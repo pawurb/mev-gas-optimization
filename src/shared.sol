@@ -36,6 +36,11 @@ interface IERC20 {
     ) external returns (bool);
 }
 
+interface IWETH is IERC20 {
+    function deposit() external payable;
+    function withdraw(uint) external;
+}
+
 interface IUniV2Pair {
     function getReserves()
         external
