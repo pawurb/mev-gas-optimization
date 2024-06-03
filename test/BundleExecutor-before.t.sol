@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 import {FlashBotsMultiCall} from "../src/BundleExecutor-before.sol";
 import {IUniV2Pair, IERC20} from "./shared.sol";
 
+// ETH PRICE $3800.0
 contract ExecutorTest is Test {
     address constant me = address(1);
     IUniV2Pair uniPool = IUniV2Pair(0xA478c2975Ab1Ea89e8196811F51A7B7Ade33eB11);
@@ -27,14 +28,14 @@ contract ExecutorTest is Test {
         vm.store(
             address(sushiPool),
             bytes32(uint256(8)), // getReserves slot
-            0x665c6fcf00000000004d4a487a40a07d962e0000000477225618f47094b06380
+            0x665c6fcf00000000004d4a487a40a07d962e0000000461F5535113259E306380
         );
 
         vm.deal(me, 0.1 ether);
-        deal(address(weth), address(uniPool), 1 ether);
-        deal(address(dai), address(uniPool), 1 ether);
-        deal(address(weth), address(sushiPool), 1 ether);
-        deal(address(dai), address(sushiPool), 1 ether);
+        deal(address(weth), address(uniPool), 2110830143201023165264);
+        deal(address(dai), address(uniPool), 8003770531868479419838547);
+        deal(address(weth), address(sushiPool), 1425751956250754389550);
+        deal(address(dai), address(sushiPool), 5298298283195761674969984);
         deal(address(weth), address(executor), 0.1 ether);
     }
 
@@ -61,35 +62,6 @@ contract ExecutorTest is Test {
         uint256 uniDaiBalance = dai.balanceOf(address(uniPool));
         uint256 sushiWethBalance = weth.balanceOf(address(sushiPool));
         uint256 sushiDaiBalance = dai.balanceOf(address(sushiPool));
-
-        console.log("uniWethReserve");
-        console.log(uniWethReserve);
-        console.log("uniWethBalance");
-        console.log(uniWethBalance);
-
-        console.log("uniDaiReserve");
-        console.log(uniDaiReserve);
-        console.log("uniDaiBalance");
-        console.log(uniDaiBalance);
-
-        console.log("sushiWethReserve");
-        console.log(sushiWethReserve);
-        console.log("sushiWethBalance");
-        console.log(sushiWethBalance);
-
-        console.log("sushiDaiReserve");
-        console.log(sushiDaiReserve);
-        console.log("sushiDaiBalance");
-        console.log(sushiDaiBalance);
-
-        console.log("daiAmountOut");
-        console.log(daiAmountOut);
-        console.log("wethAmountOut");
-        console.log(wethAmountOut);
-
-        assembly {
-
-        }
     }
 
     function getAmountOut(
