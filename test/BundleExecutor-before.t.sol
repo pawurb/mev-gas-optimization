@@ -57,11 +57,39 @@ contract ExecutorTest is Test {
             sushiDaiReserve,
             sushiWethReserve
         );
+        console.log("wethAmountOut");
+        console.log(wethAmountOut);
 
-        uint256 uniWethBalance = weth.balanceOf(address(uniPool));
-        uint256 uniDaiBalance = dai.balanceOf(address(uniPool));
-        uint256 sushiWethBalance = weth.balanceOf(address(sushiPool));
-        uint256 sushiDaiBalance = dai.balanceOf(address(sushiPool));
+        bytes memory payload1 = abi.encodeWithSignature(
+            "swap(uint256,uint256,address,bytes)",
+            daiAmountOut,
+            0,
+            address(sushiPool),
+            ""
+        );
+
+        bytes memory payload2 = abi.encodeWithSignature(
+            "swap(uint256,uint256,address,bytes)",
+            wethAmountOut,
+            0,
+            address(executor),
+            ""
+        );
+
+        address[] memory targets = new address[](2);
+        targets[0] = address(uniPool);
+        targets[1] = address(sushiPool);
+
+        bytes[] memory payloads = new bytes[](2);
+        payloads[0] = payload1;
+        payloads[1] = payload2;
+
+        // 100000000000000
+        vm.prank(me);
+        executor.uniswapWeth(wethAmountIn, 0, targets, payloads);
+
+        uint256 wethBalanceAfter = weth.balanceOf(address(executor));
+        console.log(wethBalanceAfter);
     }
 
     function getAmountOut(

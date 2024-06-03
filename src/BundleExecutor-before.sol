@@ -3,6 +3,8 @@ pragma solidity 0.8.19;
 
 pragma experimental ABIEncoderV2;
 
+import "forge-std/Test.sol";
+
 interface IERC20 {
     event Approval(address indexed owner, address indexed spender, uint value);
     event Transfer(address indexed from, address indexed to, uint value);
@@ -67,16 +69,21 @@ contract FlashBotsMultiCall {
     ) external payable onlyExecutor {
         require(_targets.length == _payloads.length);
         uint256 _wethBalanceBefore = WETH.balanceOf(address(this));
+        console.log(_wethBalanceBefore);
         WETH.transfer(_targets[0], _wethAmountToFirstMarket);
+        console.log("did transfer");
         for (uint256 i = 0; i < _targets.length; i++) {
             (bool _success, bytes memory _response) = _targets[i].call(
                 _payloads[i]
             );
+            console.log("did swap");
+            console.logBool(_success);
             require(_success);
             _response;
         }
 
         uint256 _wethBalanceAfter = WETH.balanceOf(address(this));
+        console.log(_wethBalanceAfter);
         require(_wethBalanceAfter > _wethBalanceBefore + _ethAmountToCoinbase);
         if (_ethAmountToCoinbase == 0) return;
 
