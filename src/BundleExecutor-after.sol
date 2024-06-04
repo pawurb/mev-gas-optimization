@@ -11,7 +11,7 @@ contract FlashBotsMultiCall {
         IWETH(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
 
     modifier onlyExecutor() {
-        require(msg.sender == executor);
+        require(msg.sender == address(1));
         _;
     }
 

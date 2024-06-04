@@ -1,7 +1,7 @@
 [profile.default]
 libs = ["lib"]
-# optimizer = true
-# optimizer_runs = 10000000
+optimizer = true
+optimizer_runs = 10000000
 out = "out"
 src = "src"
 
