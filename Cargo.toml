@@ -1,0 +1,40 @@
+[package]
+edition = "2021"
+name = "mev-gas-optimization"
+publish = false
+version = "0.0.0"
+
+[dependencies]
+alloy-primitives = {version = "0.7.0", default-features = false, features = ["std"]}
+alloy-sol-types = {version = "0.7.0", default-features = false, features = ["std"]}
+anyhow = "1.0"
+bigdecimal = "0.4.3"
+env_logger = "0.11.0"
+ethers = {version = "2.0", features = ["rustls", "ws"]}
+ethers-providers = {version = "2.0", features = ["ipc"]}
+ethers-signers = "2.0"
+log = "0.4"
+reqwest = {version = "0.11", features = ["json"]}
+serde_json = "1.0"
+tokio = {version = "1.35.1", features = ["full"]}
+url = "2.5.0"
+
+[[bin]]
+name = "executor_before"
+path = "src/executor_before.rs"
+
+[[bin]]
+name = "executor_after"
+path = "src/executor_after.rs"
+
+[[bin]]
+name = "executor_yulsol"
+path = "src/executor_yulsol.rs"
+
+[[bin]]
+name = "executor_yul"
+path = "src/executor_yul.rs"
+
+[[bin]]
+name = "executor_huff"
+path = "src/executor_huff.rs"
